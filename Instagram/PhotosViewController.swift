@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AFNetworking
 
 class PhotosViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -35,9 +36,8 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                     if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
                         data, options:[]) as? NSDictionary {
                             NSLog("response: \(responseDictionary)")
-                            NSLog("data1: \(responseDictionary["data"])")
                             
-                            self.pictures = responseDictionary["results"] as! [NSDictionary]
+                            self.pictures = responseDictionary["data"] as! [NSDictionary]
                             self.tableView.reloadData()
                     }
                 }
@@ -60,18 +60,15 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("PictureCell", forIndexPath: indexPath) as! PictureCell
-//
-//        let movie = movies![indexPath.row]
-//        let title = movie["title"] as! String
-//        let overview = movie["overview"] as!
-//        String
-//        
-//        cell.titleLabel.text = title
-//        cell.overviewLabel.text = overview
-//
-//        
-//        
-//        print("row \(indexPath.row)")
+        
+        let picture = pictures![indexPath.row]
+        
+        let baseUrl = picture["images"]!["low_resolution"]!!["url"] as! String
+        
+        if let photoUrl = NSURL(string: baseUrl) {
+            cell.pictureView.setImageWithURL(photoUrl)
+        }
+        
         return cell
     }
 
